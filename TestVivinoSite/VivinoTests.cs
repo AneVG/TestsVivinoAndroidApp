@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
 using System;
@@ -59,6 +59,33 @@ namespace AppiumVivinoSiteMobileTests
             var textBoxSearch = driver.FindElementById("vivino.web.app:id/editText_input");
             textBoxSearch.SendKeys("Katarzyna Reserve Red 2006");
 
+
+            //Click on the first search result and assert it holds correct data
+
+            var listSearcResults = driver.FindElementById("vivino.web.app:id/listviewWineListActivity");          
+            var firsResult = listSearcResults.FindElementByClassName("android.widget.LinearLayout");
+            firsResult.Click();
+
+            var elementWineName = driver.FindElementById("vivino.web.app:id/wine_name");
+            Assert.That(elementWineName.Text, Is.EqualTo("Reserve Red 2006"));
+
+            var elementRating= driver.FindElementById("vivino.web.app:id/rating");
+            double rating = double.Parse(elementRating.Text);
+            Assert.IsTrue(rating >= 1.00 && rating <= 5.00);
+
+            var tabsSummary = driver.FindElementById("vivino.web.app:id/tabs");
+            var tabHighlights = tabsSummary.FindElementByXPath("//android.widget.TextView[1]");
+            tabHighlights.Click();
+
+            //Click the text in the "hightlights" tab
+
+           var highlightsDescription = driver.FindElementByAndroidUIAutomator(
+                "new UiScrollable(new UiSelector().scrollable(true))" +
+                ".scrollIntoView(new UiSelector().resourceIdMatches(" +
+                "\"vivino.web.app:id/highlight_description\"))");
+
+            Assert.That(highlightsDescription.Text, Is.EqualTo("Among top 1% of all wines in the world"));
+           
         }
     }
 }
